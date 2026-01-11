@@ -1,13 +1,7 @@
 package main
 
-type EventListener interface {
-	OnEvent(userId string, event string, message string) error
-}
-
 type Notification struct {
-	UserId  string
-	Event   string
-	Message string
+	message string
 }
 
 type NotificationService struct {
@@ -20,17 +14,17 @@ func NewNotificationService(u *UserService) *NotificationService {
 	}
 }
 
-func (s *NotificationService) OnEvent(userId, event, message string) {
+func (s *NotificationService) Notify(e *Event) {
 	newNotif := &Notification{
-		UserId:  userId,
-		Event:   event,
-		Message: message,
+		message: e.message,
 	}
 
-	preferences := s.userService.Get(userId).notificationPreferences
+	for _, u := range s.userService.GetAll() {
+		preferences := u.notificationPreferences
 
-	for _, pref := range preferences {
-		channel := GetChannel(pref)
-		channel.Send(newNotif)
+		for _, pref := range preferences {
+			channel := GetChannel(pref)
+			channel.Send(newNotif)
+		}
 	}
 }

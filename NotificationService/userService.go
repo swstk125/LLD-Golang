@@ -36,3 +36,7 @@ func (s *UserService) Get(userId string) *User {
 func (s *UserService) AddPreference(u *User, t ChannelType) {
 	u.notificationPreferences = append(u.notificationPreferences, t)
 }
+
+func (s *UserService) GetAll() map[string]*User {
+	return s.users
+}
